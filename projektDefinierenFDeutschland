@@ -1,0 +1,78 @@
+import arcpy
+arcpy.env.overwriteOutput = True
+fc = arcpy.GetParameterAsText(0)
+
+
+quelle = int(arcpy.Describe(fc).extent.XMax)
+
+
+koordinat = str(quelle)
+
+def koordinatSystemDeutschland(params1):
+
+    params = params1[0:len(params1)]
+    for i in params:
+        if int(len(params)) < 4:
+            sr = arcpy.SpatialReference(4326)
+            arcpy.DefineProjection_management(fc, sr)
+            return "Koordinatensystem :\nGeographische Koordinaten (WGS 1984 Ellipsoid) WKID: 4326 \n" \
+                   "Projektsdefition ist erfolgreich  abgeschlossen"
+        elif int(len(params)) == 6:
+            return "Koordinatensystem :\nETRS(GRS 80 Ellipsoid)  oder UTM(WGS 1984 Ellipsoid)\n " \
+                   "WKID 32: 25832,\n WKID 33 : 25833 \n" \
+                   "Visuelle Kontrolle erforderlich, müssen Sie es selber machen !!"
+        elif int(len(params)) == 7:
+            if int(params[0]) == 1:
+                sr = arcpy.SpatialReference(31465)
+                arcpy.DefineProjection_management(fc, sr)
+                return "Koordinatensystem :\nGauß-Krüger 1 (Bessel Ellipsoid) WKID: 31465  \n" \
+                   "Projektsdefition ist erfolgreich  abgeschlossen"
+            elif int(params[0]) == 2:
+                sr = arcpy.SpatialReference(102328)
+                arcpy.DefineProjection_management(fc, sr)
+                return "Koordinatensystem :\nGauß-Krüger 2 (Bessel Ellipsoid)(WKID 2: 31466)  " \
+                        "oder ETRS 32 7 Stelle(GRS 80 Ellipsoid WKID 2: 102328) \n" \
+                       "Projektsdefition ist erfolgreich  abgeschlossen"
+            elif int(params[0]) == 3:
+                return "Koordinatensystem :\nGauß-Krüger 3 (Bessel Ellipsoid, WKID 3: 31467)  " \
+                    "oder ETRS 33 7 Stelle (GRS 80 Ellipsoid, WKID 3: 102359) \n " \
+                       "Visuelle Kontrolle erforderlich, müssen Sie es selber machen !!"
+            elif int(params[0]) == 4:
+                sr = arcpy.SpatialReference(31468)
+                arcpy.DefineProjection_management(fc, sr)
+                return "Koordinatensystem :\nGauß-Krüger 4 (Bessel Ellipsoid) WKID: 31468  \n" \
+                   "Projektsdefition ist erfolgreich  abgeschlossen"
+            elif int(params[0]) == 5:
+                sr = arcpy.SpatialReference(31469)
+                arcpy.DefineProjection_management(fc, sr)
+                return "Koordinatensystem :\nGauß-Krüger 5 (Bessel Ellipsoid) WKID: 31469  \n" \
+                   "Projektsdefition ist erfolgreich  abgeschlossen"
+        elif int(len(params)) == 8:
+            if int(params[1]) == 2:
+                sr = arcpy.SpatialReference(102329)
+                arcpy.DefineProjection_management(fc, sr)
+                return "Koordinatensystem :\nETRS 32 8 Stelle (GRS 80 Ellipsoid) Streifen 32 WKID: 102329  \n" \
+                   "Projektsdefition ist erfolgreich  abgeschlossen"
+            else:
+                sr = arcpy.SpatialReference(102360)
+                arcpy.DefineProjection_management(fc, sr)
+                return "Koordinatensystem :\nETRS 33 8 Stelle (GRS 80 Ellipsoid) Streifen 33 WKID: 102360 \n" \
+                   "Projektsdefition ist erfolgreich  abgeschlossen"
+
+
+
+def anzahlKoordinat(anzahl):
+    anzahl1 = anzahl[0:len(anzahl)]
+    return f"\n Achtung !\n Koordinatensystem hat vor dem Komma {len(anzahl1)} Stelle "
+
+def koordinatWkid(wkid):
+    x = arcpy.Describe(wkid)
+    return str("Der Name des Sphäroids :" + x.spatialReference.spheroidName) + "\nDer Typ des Raumbezugs :  "+  x.spatialReference.type
+
+
+arcpy.AddMessage(anzahlKoordinat(koordinat))
+arcpy.AddMessage("---------------------------------------\n")
+
+arcpy.AddMessage(koordinatSystemDeutschland(koordinat))
+arcpy.AddMessage("---------------------------------------\n")
+arcpy.AddMessage(koordinatWkid(fc))
